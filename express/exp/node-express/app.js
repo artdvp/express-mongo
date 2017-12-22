@@ -16,7 +16,8 @@ var app = express();
 
 
 var mongoose = require('mongoose');
-var mongoDB = `mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_COL}`;
+var mongoDB = 'mongodb://ad_min:mdb7499312@ds013951.mlab.com:13951/nodemdb';
+//`mongodb://${process.env.DB_USER}:${process.env.DB_PASS}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_COL}`;
 
 mongoose.connect(mongoDB, {
   useMongoClient: true
