@@ -3,3 +3,5 @@ setTimeout(() => {
 }, 3000);
 
 console.log('Second')
+
+console.log(process.env.MDB_PSS)
