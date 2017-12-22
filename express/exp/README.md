@@ -524,3 +524,128 @@ SomeModel.find(callback_function);
 ```
 
 ### Setting up the MongoDB database
+
+```
+/express-locallibrary-tutorial  //the project root
+  /models
+    author.js
+    book.js
+    bookinstance.js
+    genre.js
+```
+
+### Author model
+
+```js
+var mongoose = require('mongoose');
+
+var Schema = mongoose.Schema;
+
+var AuthorSchema = new Schema(
+  {
+    first_name: {type: String, required: true, max: 100},
+    family_name: {type: String, required: true, max: 100},
+    date_of_birth: {type: Date},
+    date_of_death: {type: Date},
+  }
+);
+
+// Virtual for author's full name
+AuthorSchema
+.virtual('name')
+.get(function () {
+  return this.family_name + ', ' + this.first_name;
+});
+
+// Virtual for author's URL
+AuthorSchema
+.virtual('url')
+.get(function () {
+  return '/catalog/author/' + this._id;
+});
+
+//Export model
+module.exports = mongoose.model('Author', AuthorSchema);
+```
+
+### Book model
+
+```js
+var mongoose = require('mongoose');
+
+var Schema = mongoose.Schema;
+
+var BookSchema = new Schema({
+  title: {type: String, required: true},
+  author: {type: Schema.ObjectId, ref: 'Author', required: true},
+  summary: {type: String, required: true},
+  isbn: {type: String, required: true},
+  genre: [{type: Schema.ObjectId, ref: 'Genre'}]
+});
+
+// Virtual for book's URL
+BookSchema
+.virtual('url')
+.get(function () {
+  return '/catalog/book/' + this._id;
+});
+
+//Export model
+module.exports = mongoose.model('Book', BookSchema);
+```
+
+### BookInstance model
+
+```js
+var mongoose = require('mongoose');
+
+var Schema = mongoose.Schema;
+
+var BookInstanceSchema = new Schema({
+  book: { type: Schema.ObjectId, ref: 'Book', required: true }, //reference to the associated book
+  imprint: {type: String, required: true},
+  status: {type: String, required: true, enum: ['Available', 'Maintenance', 'Loaned', 'Reserved'], default: 'Maintenance'},
+  due_back: {type: Date, default: Date.now},
+});
+
+// Virtual for bookinstance's URL
+BookInstanceSchema
+.virtual('url')
+.get(function () {
+  return '/catalog/bookinstance/' + this._id;
+});
+
+//Export model
+module.exports = mongoose.model('BookInstance', BookInstanceSchema);
+```
+
+### Testing - create some items
+
+npm install async --save
+
+node populatedb <db_url>
+
+### Routes Needed for the local libraly
+
+- catalog/ — The home/index page. catalog/<objects>/ — The list of all books, bookinstances, genres, or authors (e.g. /catalog/books/, /catalog/genres/, etc.)
+- catalog/<object>/<id> — The detail page for a specific book, bookinstance, genre, or author with the given _id field value (e.g./catalog/book/584493c1f4887f06c0e67d37).
+- catalog/<object>/create — The form to create a new book, bookinstance, genre, or author (e.g. /catalog/book/create).
+- catalog/<object>/<id>/update — The form to update a specific book, bookinstance, genre, or author with the given _id field value (e.g. /catalog/book/584493c1f4887f06c0e67d37/update).
+- catalog/<object>/<id>/delete — The form to delete a specific book, bookinstance, genre, author with the given _id field value (e.g./catalog/book/584493c1f4887f06c0e67d37/delete).
+
+### Create the route-handler callback functions
+
+```
+/express-locallibrary-tutorial  //the project root
+  /controllers
+    authorController.js
+    bookController.js
+    bookinstanceController.js
+    genreController.js
+```
+
+### Author controller
+
+```js
+
+```
